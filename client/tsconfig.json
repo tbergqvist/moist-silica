@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+        "target": "es6",
+        "module": "es2015",
+        "sourceMap": true, 
+        "experimentalDecorators": true, 
+        "emitDecoratorMetadata": true,
+        "removeComments": true,
+        "jsx": "react",
+        "jsxFactory": "h"
+    },
+    "include": [
+        "src/**/*.tsx",
+        "src/**/*.ts",
+        "typings/*",
+        "../shared/**/*.d.ts"
+    ]
+}
