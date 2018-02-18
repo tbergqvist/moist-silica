@@ -1,6 +1,6 @@
 import { route } from "preact-router";
 import { fetcher } from "../fetcher";
-import { API } from "../../../shared/api";
+import { GameApi } from "../../../shared/api";
 
 export const LOGIN_START = "LOGIN_START";
 function loginStart() {
@@ -27,13 +27,13 @@ function loginFailed(error) {
 export function login(username: string, password: string) {
   return async (dispatch)=> {
     dispatch(loginStart());
-    let body: API.LoginBody = {username, password};
+    let body: GameApi.LoginBody = {username, password};
     try {
       let response = await fetcher.post("http://localhost:3000/login", body);
       console.log(response);
       if (response.status === 200 || response.status === 204) {
         dispatch(loginSuccess());
-        route("home");
+        route("/");
       } else {
         dispatch(loginFailed(response.statusText));
       }

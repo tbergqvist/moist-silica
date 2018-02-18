@@ -1,6 +1,6 @@
 import { route } from "preact-router";
 import { fetcher } from "../fetcher";
-import { API } from "../../../shared/api";
+import { GameApi } from "../../../shared/api";
 
 export const REGISTER_START = "REGISTER_START";
 function registerStart() {
@@ -27,13 +27,13 @@ function registerFailed(error) {
 export function register(username: string, password: string) {
   return async (dispatch)=> {
     dispatch(registerStart());
-    let body: API.LoginBody = { username, password };
+    let body: GameApi.LoginBody = { username, password };
     try {
       let response = await fetcher.post("http://localhost:3000/register", body);
       console.log(response);
       if (response.status === 200 || response.status === 204) {
         dispatch(registerSuccess());
-        route("home");
+        route("/");
       } else {
         dispatch(registerFailed(response.statusText));
       }

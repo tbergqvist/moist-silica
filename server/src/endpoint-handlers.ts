@@ -2,7 +2,8 @@ import { database } from "./database";
 import { Result } from "./result";
 import { Request } from "express";
 import { System } from "./system";
-import { API } from "../../shared/api";
+import { GameApi } from "../../shared/api";
+import { HttpResponse } from "./http-response";
 
 function createLinks(address: {address: string, port: number}) {
   return {
@@ -14,8 +15,8 @@ function isUndefinedOrNull(obj: any) {
   return obj === undefined || obj === null;
 }
 
-export async function registerRequestEndpoint(request: Request, system: System): Promise<Result<any, number>> {
-  let registerRequestData: API.RegisterBody = request.body;
+export async function registerRequestEndpoint(request: Request, system: System): Promise<Result<HttpResponse, number>> {
+  let registerRequestData: GameApi.RegisterBody = request.body;
 
   if (isUndefinedOrNull(registerRequestData.password) || isUndefinedOrNull(registerRequestData.username)) {
     return Result.Error(400);
@@ -25,11 +26,13 @@ export async function registerRequestEndpoint(request: Request, system: System):
 
   return accountId
     .mapError(()=>500)
-    .map(()=> createLinks(system.address()));
+    .map(()=> ({
+      body: createLinks(system.address())
+    }));
 }
 
-export async function loginRequestEndpoint(request: Request, system: System) {
-  let loginRequestData: API.LoginBody = request.body;
+export async function loginRequestEndpoint(request: Request, system: System): Promise<Result<HttpResponse, number>> {
+  let loginRequestData: GameApi.LoginBody = request.body;
 
   if (isUndefinedOrNull(loginRequestData.password) || isUndefinedOrNull(loginRequestData.username)) {
     return Result.Error(400);
@@ -41,6 +44,13 @@ export async function loginRequestEndpoint(request: Request, system: System) {
     .mapError(()=>500)
     .andThen((user)=> {
       return user.filter(user => user.password === loginRequestData.password)
+        .map(_ => ({
+          cookie: "123"
+        }))
       .okOr(401);
     });
+}
+
+export async function getGameStateEndpoint(_: Request, _2: System): Promise<Result<HttpResponse, number>> {
+  return Result.Ok({});
 }
